@@ -1,0 +1,114 @@
+= Deploying the MCP Server for ACM
+:navtitle: Deploying the MCP Server for ACM
+
+This section walks you through deploying the MCP server for Red Hat Advanced Cluster Management on your hub cluster and configuring OpenShift Lightspeed to use it for fleet-wide natural language queries. The OpenShift Lightspeed Operator is installed and connected to a large language model (LLM) provider on your hub cluster. 
+
+At the end of this section, you'll have:
+
+* Deployed the MCP server for Red Hat Advanced Cluster Management on the hub cluster using Helm.
+* Updated the `OLSConfig` custom resource to register the MCP server and disable human-in-the-loop approvals.
+
+== Deploying the MCP Server
+
+The MCP server can be deployed on your hub cluster using Helm. The Helm chart creates the necessary resources including the deployment, service, service account, and RBAC roles required to interact with the RHACM Search API.
+
+. Switch to the Bastion Host terminal tab in the right panel.
+. Helm is not pre-installed on the bastion machine, so let's install it first:
++
+[source,bash,subs="+macros,+attributes",role=execute]
+----
+curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+----
++
+. Add the Helm chart repository and install the MCP server:
++
+[source,bash,subs="+macros,+attributes",role=execute]
+----
+helm repo add acm-search https://raw.githubusercontent.com/stolostron/search-mcp-server/main/charts
+helm repo update
+helm install acm-mcp-server acm-search/acm-mcp-server --create-namespace --namespace acm-search
+----
++
+. Verify that the MCP server pod is running:
++
+[source,bash,subs="+macros,+attributes",role=execute]
+----
+watch oc get pods -n acm-search
+----
+
+Wait until you see the `acm-mcp-server` pod with a status of `Running`.
+
+== Configuring OpenShift Lightspeed
+
+With the MCP server deployed, you now need to register it in the OpenShift Lightspeed configuration so the assistant knows how to reach it. The OpenShift Lightspeed configuration is declared in the `OLSConfig` CR already deployed in your hub cluster. This is the resource we will modify to allow users to query resources across the fleet.
+
+=== Updating the OLSConfig Custom Resource
+
+Apply the following patch to your `OLSConfig` custom resource to enable the MCPServer feature gate and register ACM's MCP server. For more information, see the OpenShift Lightspeed documentation on https://docs.redhat.com/en/documentation/red_hat_openshift_lightspeed/1.0tp1/html/about_openshift_lightspeed/index[enabling a custom MCP server].
+
+Run the following command from the Bastion Host:
+
+[source,bash,subs="+macros,+attributes",role=execute]
+----
+oc patch olsconfig cluster --type=merge -p '
+{
+  "spec": {
+    "featureGates": ["MCPServer"],
+    "mcpServers": [
+      {
+        "name": "acm",
+        "url": "http://acm-mcp-server.acm-search.svc.cluster.local/mcp",
+        "timeout": 30,
+        "headers": [
+          {
+            "name": "Authorization",
+            "valueFrom": {
+              "type": "kubernetes"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}'
+----
+
+This configuration does three things:
+
+* *featureGates*: Enables the `MCPServer` feature gate, which allows OpenShift Lightspeed to connect to external MCP servers.
+* *mcpServers*: Registers the MCP server endpoint. The `url` points to the in-cluster service deployed in the previous step.
+* *headers*: Uses `type: kubernetes` for the authorization header. This instructs OpenShift Lightspeed to automatically use the service account token for internal cluster authentication.
+
+=== Bypassing Human-in-the-Loop Approval for Read-Only Queries
+
+OpenShift Lightspeed includes human-in-the-loop approvals as a security guardrail, ensuring administrators review and confirm AI actions before any cluster state changes occur.
+
+However, the MCP server for Red Hat Advanced Cluster Management is inherently read-only. It only queries, filters, and retrieves resource data, but cannot modify your cluster state. Requiring manual approval for every search query would introduce unnecessary latency and interrupt the conversational flow of your troubleshooting sessions. To streamline the experience, apply the following configuration:
+
+Patch the OLSConfig to disable manual approval:
+
+[source,bash,subs="+macros,+attributes",role=execute]
+----
+oc patch olsconfig cluster --type=merge -p '
+{
+  "spec": {
+    "ols": {
+      "toolsApprovalConfig": {
+        "approvalTimeout": 600,
+        "approvalType": "never"
+      }
+    }
+  }
+}'
+----
+
+Finally, verify that the OpenShift Lightspeed pods have restarted with the new configuration:
+
+[source,bash,subs="+macros,+attributes",role=execute]
+----
+watch oc get pods -n openshift-lightspeed
+----
+
+Wait until all pods show a status of `Running`. If they are still restarting, wait a moment and check again.
+
+In the next section, you'll start querying your fleet.

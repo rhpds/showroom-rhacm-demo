@@ -6,7 +6,7 @@
 == Introduction
 
 https://www.redhat.com/en/technologies/management/advanced-cluster-management[Red Hat Advanced Cluster Management] (RHACM) is Red Hat's enterprise software solution that allows IT teams to centrally manage, monitor, and scale fleets of Kubernetes and OpenShift clusters across data centers, cloud providers (like AWS, Azure, GCP), and edge environments from a single console. 
-This demo covers the five major use cases for Red Hat Advanced Cluster Management for Kubernetes: multicluster lifecycle, policy-driven governance, advanced application lifecycle, multicluster observability, and business continuity. 
+This demo covers the major use cases for Red Hat Advanced Cluster Management for Kubernetes: multicluster lifecycle, policy-driven governance, advanced application lifecycle, multicluster observability, business continuity, and AI-powered fleet management with OpenShift Lightspeed.
 
 == What Users See
 
@@ -33,6 +33,7 @@ After completing this lab, you will have gained comprehensive, hands-on experien
 * **End-to-End Observability:** You will configure centralized visibility to monitor cluster health and perform quick root cause analysis. This includes setting up backend storage (S3 buckets) and integrating Grafana into ACM for a complete observability overview.
 * **Fleet Virtualization:** You will learn how to manage virtualization workloads from a single pane of glass using RHACM. This includes utilizing a centralized multi-cluster tree-view for enhanced visibility, creating new virtual machines across your clusters, and performing cross-cluster live migrations to simplify operations and reduce manual context switching.
 * **Business Continuity:** You will learn how to protect critical workloads and ensure service availability across your multi-cluster fleet using RHACM. This includes configuring disaster recovery strategies, setting up cluster failover and failback procedures, and leveraging backup and restore capabilities to minimize downtime and maintain operational resilience in the event of cluster or infrastructure failures.
+* **AI-Powered Fleet Management with OpenShift Lightspeed:** You will learn how to deploy the MCP server for Red Hat Advanced Cluster Management and configure OpenShift Lightspeed to query resources across your entire fleet using natural language. This includes deploying the MCP server via Helm, updating the OLSConfig custom resource, and using conversational queries to troubleshoot and analyze your managed clusters.
 
 [[prerequisites]]
 == Prerequisites

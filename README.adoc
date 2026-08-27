@@ -9,6 +9,7 @@ _Contents:_
 - *Governance:* Apply policies consistently across managed clusters and monitor configuration drift/compliance.
 - *Multicluster Observability:* Centralize monitoring, metrics, alerts, and insights across clusters.
 - *Application Lifecycle Management:* Deploy and manage applications across multiple clusters.
+- *OpenShift Lightspeed:* Query fleet-wide resources using natural language with the MCP server for Red Hat Advanced Cluster Management.
 - *Business Continuity:* Demonstrate disaster recovery and resilience across clusters.
 
 ## Demo Overview
@@ -17,7 +18,7 @@ The RHACM demo showcases how Red Hat Advanced Cluster Management provides a cent
 management plane for OpenShift clusters and workloads across hybrid cloud environments.
 
 The demo walks through the main capabilities of RHACM, from cluster provisioning and
-governance to application management, observability, virtualization, and business continuity.
+governance to application management, observability, virtualization, AI-powered fleet queries with OpenShift Lightspeed, and business continuity.
 
 ## Red Hat Demo Platform
 

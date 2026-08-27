@@ -24,11 +24,16 @@
 * xref:obs-analyzing-dashs-metrics.adoc[Analyzing Dashboards and Metrics]
 * xref:obs-interactive-demos.adoc[Observability Interactive Demos]
 
-.5. Application Lifecycle 
+.5. Application Lifecycle
 * xref:alc-intro-app-lifecycle.adoc[Introduction to Application Lifecycle]
 * xref:alc-integrating-gitops-rhacm.adoc[Integrating RHACM & OpenShift GitOps]
 * xref:alc-deploying-apps.adoc[Deploying and Managing MultiCluster Applications with GitOps]
 
-.6. Business Continuity
+.6. OpenShift Lightspeed
+* xref:ols-intro-lightspeed.adoc[Introduction to OpenShift Lightspeed]
+* xref:ols-search-mcp-setup.adoc[Deploying the MCP Server for ACM]
+* xref:ols-querying-fleet.adoc[Querying Your Fleet]
+
+.7. Business Continuity
 * xref:bc-intro-business-continuity.adoc[Introduction to Business Contitnuity]
 * xref:bc-acm-hub-backup-restore.adoc[Hub Backup and Restore]
